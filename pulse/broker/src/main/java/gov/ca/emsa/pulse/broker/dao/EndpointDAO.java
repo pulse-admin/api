@@ -20,4 +20,7 @@ public interface EndpointDAO {
 	public EndpointDTO findByExternalId(String externalId);
 	public EndpointDTO findByLocationIdAndType(Long locationId, List<EndpointStatusEnum> status, EndpointTypeEnum type);
 	public EndpointDTO findByManagingOrganizationAndType(String managingOrganizationName, List<EndpointStatusEnum> status, EndpointTypeEnum type);
+	EndpointDTO findByOrganizationIdAndType(String organizationId,
+			List<EndpointStatusEnum> statuses, EndpointTypeEnum type);
+	public EndpointDTO findByUrl(String url);
 }

@@ -17,4 +17,5 @@ public interface AlternateCareFacilityDAO {
 	public List<AlternateCareFacilityDTO> getByIdentifier(String name);
 	public List<AlternateCareFacilityDTO> getByName(String name);
 	public void deleteItemsOlderThan(Date oldestItem) throws SQLException;
+	public List<AlternateCareFacilityDTO> getByLiferayAcfId(Long acfId);
 }

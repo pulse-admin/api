@@ -111,4 +111,14 @@ public class AlternateCareFacilityManagerImpl implements AlternateCareFacilityMa
 			}
 		}
 	}
+
+	@Override
+	public AlternateCareFacilityDTO getByLiferayAcfId(Long liferayAcfId) {
+		List<AlternateCareFacilityDTO> matches = acfDao.getByLiferayAcfId(liferayAcfId);
+		AlternateCareFacilityDTO result = null;
+		if(matches != null && matches.size() > 0) {
+			result = matches.get(0);
+		}
+		return result;
+	}
 }

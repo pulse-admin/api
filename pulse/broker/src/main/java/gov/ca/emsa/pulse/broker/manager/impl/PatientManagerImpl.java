@@ -17,9 +17,8 @@ import gov.ca.emsa.pulse.broker.manager.AlternateCareFacilityManager;
 import gov.ca.emsa.pulse.broker.manager.AuditEventManager;
 import gov.ca.emsa.pulse.broker.manager.DocumentManager;
 import gov.ca.emsa.pulse.broker.manager.PatientManager;
-import gov.ca.emsa.pulse.broker.manager.PulseUserManager;
 import gov.ca.emsa.pulse.broker.manager.QueryManager;
-import gov.ca.emsa.pulse.broker.saml.SAMLInput;
+import gov.ca.emsa.pulse.broker.saml.SamlUtil;
 import gov.ca.emsa.pulse.broker.util.QueryableEndpointStatusUtil;
 import gov.ca.emsa.pulse.common.domain.QueryEndpointStatus;
 import gov.ca.emsa.pulse.service.UserUtil;
@@ -50,7 +49,6 @@ public class PatientManagerImpl implements PatientManager {
 	@Autowired private DocumentManager docManager;
 	@Autowired QueryableEndpointStatusUtil endpointStatusesForQuery;
 	@Autowired private QueryDAO queryDao;
-	@Autowired private PulseUserManager pulseUserManager;
 	
 	public PatientManagerImpl() {
 	}
@@ -159,6 +157,12 @@ public class PatientManagerImpl implements PatientManager {
 				patientEndpointMapToCreate.setEndpointId(documentDiscoveryEndpoint.getId());	
 				result = patientDao.createPatientEndpointMap(patientEndpointMapToCreate);
 				result.setEndpoint(documentDiscoveryEndpoint);
+			}else{
+				documentDiscoveryEndpoint = endpointDao.findByOrganizationIdAndType(patientDiscoveryEndpoint.getOrganizationId(), 
+						endpointStatusesForQuery.getStatuses(), EndpointTypeEnum.DOCUMENT_DISCOVERY);
+				patientEndpointMapToCreate.setEndpointId(documentDiscoveryEndpoint.getId());	
+				result = patientDao.createPatientEndpointMap(patientEndpointMapToCreate);
+				result.setEndpoint(documentDiscoveryEndpoint);
 			}
 		}
 		return result;
@@ -218,10 +222,9 @@ public class PatientManagerImpl implements PatientManager {
 		patientEndpointMapForRequery.setEndpoint(endpointForRequery);
 
 		if(patientEndpointMapForRequery != null) {
-			PulseUserDTO userDto = pulseUserManager.getById(Long.parseLong(user.getPulseUserId()));
-			String assertion = userDto.getAssertion();
+			String assertion = SamlUtil.signAndBuildStringAssertion(user);
 			patient.getEndpointMaps().add(patientEndpointMapForRequery);
-			docManager.queryForDocuments(user, assertion,  patientEndpointMapForRequery);
+            docManager.queryForDocuments(user, assertion,  patientEndpointMapForRequery);
 		}
 		
 		return getPatientById(patientId);

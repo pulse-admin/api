@@ -12,7 +12,6 @@ import gov.ca.emsa.pulse.broker.dto.DocumentQueryResults;
 import gov.ca.emsa.pulse.broker.dto.DomainToDtoConverter;
 import gov.ca.emsa.pulse.broker.dto.EndpointDTO;
 import gov.ca.emsa.pulse.broker.dto.PatientEndpointMapDTO;
-import gov.ca.emsa.pulse.broker.saml.SAMLInput;
 import gov.ca.emsa.pulse.common.domain.Document;
 import gov.ca.emsa.pulse.common.domain.DocumentIdentifier;
 import gov.ca.emsa.pulse.common.domain.Patient;
@@ -260,12 +259,6 @@ public class JSONToSoapTest {
 		names.add(toCreate1);
 		ps.setPatientNames(names);
 		ps.getPatientNames().get(0).getGivenName().add("Brian");
-
-		SAMLInput input = new SAMLInput();
-		input.setStrIssuer("https://idp.dhv.gov");
-		input.setStrNameID("UserBrianLindsey");
-		input.setStrNameQualifier("My Website");
-		input.setSessionId("abcdedf1234567");
 		HashMap<String, String> customAttributes = new HashMap<String,String>();
 		customAttributes.put("RequesterFirstName", "Katy");
 		customAttributes.put("RequestReason", "Patient is bleeding.");
@@ -274,7 +267,6 @@ public class JSONToSoapTest {
 		customAttributes.put("PatientGender", ps.getGender());
 		customAttributes.put("PatientHomeZip", ps.getZip());
 		customAttributes.put("PatientSSN", ps.getSsn());
-		input.setAttributes(customAttributes);
 		EndpointDTO endpoint = new EndpointDTO();
 		endpoint.setUrl("http://someihe/endpointTransaction");
 		endpoint.setManagingOrganization(SCHIE_MANAGE_ORG);
@@ -334,12 +326,6 @@ public class JSONToSoapTest {
 		names.add(toCreate1);
 		ps.setPatientNames(names);
 		ps.getPatientNames().get(0).getGivenName().add("Brian");
-
-		SAMLInput input = new SAMLInput();
-		input.setStrIssuer("https://idp.dhv.gov");
-		input.setStrNameID("UserBrianLindsey");
-		input.setStrNameQualifier("My Website");
-		input.setSessionId("abcdedf1234567");
 		HashMap<String, String> customAttributes = new HashMap<String,String>();
 		customAttributes.put("RequesterFirstName", "Katy");
 		customAttributes.put("RequestReason", "Patient is bleeding.");
@@ -348,7 +334,6 @@ public class JSONToSoapTest {
 		customAttributes.put("PatientGender", ps.getGender());
 		customAttributes.put("PatientHomeZip", ps.getZip());
 		customAttributes.put("PatientSSN", ps.getSsn());
-		input.setAttributes(customAttributes);
 		EndpointDTO endpoint = new EndpointDTO();
 		endpoint.setUrl("http://someihe/endpointTransaction");
 		endpoint.setManagingOrganization(UCDAVIS_MANAGE_ORG);
@@ -423,12 +408,6 @@ public class JSONToSoapTest {
 		names.add(toCreate1);
 		ps.setPatientNames(names);
 		ps.getPatientNames().get(0).getGivenName().add("Brian");
-
-		SAMLInput input = new SAMLInput();
-		input.setStrIssuer("https://idp.dhv.gov");
-		input.setStrNameID("UserBrianLindsey");
-		input.setStrNameQualifier("My Website");
-		input.setSessionId("abcdedf1234567");
 		HashMap<String, String> customAttributes = new HashMap<String,String>();
 		customAttributes.put("RequesterFirstName", "Katy");
 		customAttributes.put("RequestReason", "Patient is bleeding.");
@@ -437,7 +416,6 @@ public class JSONToSoapTest {
 		customAttributes.put("PatientGender", ps.getGender());
 		customAttributes.put("PatientHomeZip", ps.getZip());
 		customAttributes.put("PatientSSN", ps.getSsn());
-		input.setAttributes(customAttributes);
 		EndpointDTO endpoint = new EndpointDTO();
 		endpoint.setUrl("http://someihe/endpointTransaction");
 		endpoint.setManagingOrganization("Sutter Health");
@@ -501,12 +479,6 @@ public class JSONToSoapTest {
 		names.add(toCreate1);
 		ps.setPatientNames(names);
 		ps.getPatientNames().get(0).getGivenName().add("Brian");
-
-		SAMLInput input = new SAMLInput();
-		input.setStrIssuer("https://idp.dhv.gov");
-		input.setStrNameID("UserBrianLindsey");
-		input.setStrNameQualifier("My Website");
-		input.setSessionId("abcdedf1234567");
 		HashMap<String, String> customAttributes = new HashMap<String,String>();
 		customAttributes.put("RequesterFirstName", "Katy");
 		customAttributes.put("RequestReason", "Patient is bleeding.");
@@ -515,7 +487,6 @@ public class JSONToSoapTest {
 		customAttributes.put("PatientGender", ps.getGender());
 		customAttributes.put("PatientHomeZip", ps.getZip());
 		customAttributes.put("PatientSSN", ps.getSsn());
-		input.setAttributes(customAttributes);
 		EndpointDTO endpoint = new EndpointDTO();
 		endpoint.setUrl("http://someihe/endpointTransaction");
 
@@ -578,12 +549,6 @@ public class JSONToSoapTest {
 		names.add(toCreate1);
 		names.add(toCreate2);
 		ps.setPatientNames(names);
-
-		SAMLInput input = new SAMLInput();
-		input.setStrIssuer("https://idp.dhv.gov");
-		input.setStrNameID("UserBrianLindsey");
-		input.setStrNameQualifier("My Website");
-		input.setSessionId("abcdedf1234567");
 		HashMap<String, String> customAttributes = new HashMap<String,String>();
 		customAttributes.put("RequesterFirstName", "Katy");
 		customAttributes.put("RequestReason", "Patient is bleeding.");
@@ -592,8 +557,6 @@ public class JSONToSoapTest {
 		customAttributes.put("PatientGender", ps.getGender());
 		customAttributes.put("PatientHomeZip", ps.getZip());
 		customAttributes.put("PatientSSN", ps.getSsn());
-		input.setAttributes(customAttributes);
-
 		EndpointDTO endpoint = new EndpointDTO();
 		endpoint.setUrl("http://someihe/endpointTransaction");
 
@@ -654,15 +617,9 @@ public class JSONToSoapTest {
 	SAMLException, SOAPException, JWTValidationException, IOException, ConfigurationException, DOMException, MarshallingException, WSSecurityException {
 		Patient patient = new Patient();
 		patient.setExternalPatientId("11.5.4.4.6667.110");
-		SAMLInput input = new SAMLInput();
-		input.setStrIssuer("https://idp.dhv.gov");
-		input.setStrNameID("UserBrianLindsey");
-		input.setStrNameQualifier("My Website");
-		input.setSessionId("abcdedf1234567");
 		HashMap<String, String> customAttributes = new HashMap<String,String>();
 		customAttributes.put("RequesterFirstName", "Katy");
 		customAttributes.put("RequestReason", "Patient is bleeding.");
-		input.setAttributes(customAttributes);
 		EndpointDTO endpoint = new EndpointDTO();
 		endpoint.setUrl("http://someihe/endpointTransaction");
 
@@ -682,16 +639,9 @@ public class JSONToSoapTest {
 		final String patientId = "P20170327093045.2^^^&1.3.6.1.4.1.21367.2005.13.20.1000&ISO";
 		PatientEndpointMapDTO plmDto = new PatientEndpointMapDTO();
 		plmDto.setExternalPatientRecordId(patientId);
-
-		SAMLInput input = new SAMLInput();
-		input.setStrIssuer("https://idp.dhv.gov");
-		input.setStrNameID("UserBrianLindsey");
-		input.setStrNameQualifier("My Website");
-		input.setSessionId("abcdedf1234567");
 		HashMap<String, String> customAttributes = new HashMap<String,String>();
 		customAttributes.put("RequesterFirstName", "Katy");
 		customAttributes.put("RequestReason", "Patient is bleeding.");
-		input.setAttributes(customAttributes);
 
 		EndpointDTO endpoint = new EndpointDTO();
 		endpoint.setUrl(XCQEndpoint);

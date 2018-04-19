@@ -39,6 +39,8 @@ public class AlternateCareFacilityDAOImpl extends BaseDAOImpl implements Alterna
 		}
 		
 		AlternateCareFacilityEntity toInsert = new AlternateCareFacilityEntity();
+		toInsert.setLiferayStateId(dto.getLiferayStateId());
+		toInsert.setLiferayAcfId(dto.getLiferayAcfId());
 		toInsert.setIdentifier(dto.getIdentifier());
 		toInsert.setName(dto.getName());
 		toInsert.setPhoneNumber(dto.getPhoneNumber());
@@ -66,6 +68,8 @@ public class AlternateCareFacilityDAOImpl extends BaseDAOImpl implements Alterna
 	@Override
 	public AlternateCareFacilityDTO update(AlternateCareFacilityDTO dto) throws SQLException {
 		AlternateCareFacilityEntity toUpdate = this.getEntityById(dto.getId());
+		toUpdate.setLiferayStateId(dto.getLiferayStateId());
+		toUpdate.setLiferayAcfId(dto.getLiferayAcfId());
 		toUpdate.setIdentifier(dto.getIdentifier());
 		toUpdate.setName(dto.getName());
 		toUpdate.setPhoneNumber(dto.getPhoneNumber());
@@ -134,7 +138,18 @@ public class AlternateCareFacilityDAOImpl extends BaseDAOImpl implements Alterna
 		}
 		return dtos;
 	}
-	
+
+	@Override
+	public List<AlternateCareFacilityDTO> getByLiferayAcfId(Long acfId) {
+		List<AlternateCareFacilityEntity> results = this.getEntityByLiferayAcfId(acfId);
+		List<AlternateCareFacilityDTO> dtos = new ArrayList<AlternateCareFacilityDTO>();
+		for(AlternateCareFacilityEntity entity : results) {
+			AlternateCareFacilityDTO dto = new AlternateCareFacilityDTO(entity);
+			dtos.add(dto);
+		}
+		return dtos;
+	}
+
 	@Override
 	public List<AlternateCareFacilityDTO> getByName(String name) {
 		List<AlternateCareFacilityEntity> results = this.getEntityByName(name);
@@ -209,4 +224,14 @@ public class AlternateCareFacilityDAOImpl extends BaseDAOImpl implements Alterna
 		query.setParameter("name", name);
 		return query.getResultList();
 	}
+	
+	private List<AlternateCareFacilityEntity> getEntityByLiferayAcfId(Long acfId) {
+		Query query = entityManager.createQuery( "SELECT DISTINCT a "
+				+ "FROM AlternateCareFacilityEntity a "
+				+ "where (a.liferayAcfId = :identifier)"
+				, AlternateCareFacilityEntity.class );
+		query.setParameter("identifier", acfId);
+		return query.getResultList();
+	}
+	
 }

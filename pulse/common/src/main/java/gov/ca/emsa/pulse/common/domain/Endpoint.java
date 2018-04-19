@@ -11,6 +11,7 @@ public class Endpoint {
 	private EndpointType endpointType;
 	private EndpointStatus endpointStatus;
 	private String managingOrganization;
+	private String organizationId;
 	private String adapter;
 	private List<EndpointMimeType> mimeTypes;
 	private String payloadType;
@@ -74,6 +75,14 @@ public class Endpoint {
 		this.payloadType = payloadType;
 	}
 
+	public String getManagingOrganization() {
+		return managingOrganization;
+	}
+
+	public void setManagingOrganization(String managingOrganization) {
+		this.managingOrganization = managingOrganization;
+	}
+
 	public String getPublicKey() {
 		return publicKey;
 	}
@@ -130,13 +139,27 @@ public class Endpoint {
 		this.locations = locations;
 	}
 
-	public String getManagingOrganization() {
-		return managingOrganization;
+	public String getOrganizationId() {
+		return organizationId;
 	}
 
-	public void setManagingOrganization(String managingOrganization) {
-		this.managingOrganization = managingOrganization;
+	public void setOrganizationId(String organizationId) {
+		this.organizationId = organizationId;
 	}
+
+	@Override
+	public String toString() {
+		return "Endpoint [id=" + id + ", externalId=" + externalId
+				+ ", endpointType=" + endpointType.toString() + ", endpointStatus="
+				+ endpointStatus + ", managingOrganization="
+				+ organizationId + ", adapter=" + adapter
+				+ ", mimeTypes=" + mimeTypes + ", payloadType=" + payloadType
+				+ ", publicKey=" + publicKey + ", url=" + url
+				+ ", externalLastUpdateDate=" + externalLastUpdateDate
+				+ ", locations=" + locations + ", creationDate=" + creationDate
+				+ ", lastModifiedDate=" + lastModifiedDate + "]";
+	}
+	
 	
 	
 }

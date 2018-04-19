@@ -1,8 +1,7 @@
 package gov.ca.emsa.pulse.broker.adapter.service;
 
 import gov.ca.emsa.pulse.broker.dto.EndpointDTO;
-import gov.ca.emsa.pulse.broker.saml.SAMLInput;
-import gov.ca.emsa.pulse.broker.saml.SamlGenerator;
+import gov.ca.emsa.pulse.broker.saml.SamlUtil;
 import ihe.iti.xds_b._2007.RetrieveDocumentSetRequestType;
 import ihe.iti.xds_b._2007.RetrieveDocumentSetResponseType;
 
@@ -102,7 +101,6 @@ import org.xml.sax.InputSource;
 public class EHealthQueryProducerServiceImpl implements EHealthQueryProducerService{
 
 	private static final Logger logger = LogManager.getLogger(EHealthQueryProducerServiceImpl.class);
-	@Autowired private SamlGenerator samlGenerator;
 	private Crypto crypto;
 	
 	@Value("${soapKeystorePass}")

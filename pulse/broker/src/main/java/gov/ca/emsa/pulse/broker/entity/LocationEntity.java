@@ -194,7 +194,6 @@ public class LocationEntity {
 
 	public boolean hasRequiredFields() {
 		return !StringUtils.isEmpty(this.getName()) && 
-				!StringUtils.isEmpty(this.getParentOrganizationName()) &&
 				!StringUtils.isEmpty(this.getExternalId()) &&
 				this.getLocationStatusId() != null;
 	}

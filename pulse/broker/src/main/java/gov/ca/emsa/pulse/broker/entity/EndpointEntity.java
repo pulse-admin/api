@@ -49,6 +49,9 @@ public class EndpointEntity {
 	@Column(name = "managing_organization_name")
 	private String managingOrganization;
 	
+	@Column(name = "organization_id")
+	private String organizationId;
+	
 	@Column(name = "adapter")
 	private String adapter;
 	
@@ -104,6 +107,14 @@ public class EndpointEntity {
 
 	public Date getLastModifiedDate() {
 		return lastModifiedDate;
+	}
+
+	public String getOrganizationId() {
+		return organizationId;
+	}
+
+	public void setOrganizationId(String organizationId) {
+		this.organizationId = organizationId;
 	}
 
 	public void setLastModifiedDate(Date lastModifiedDate) {

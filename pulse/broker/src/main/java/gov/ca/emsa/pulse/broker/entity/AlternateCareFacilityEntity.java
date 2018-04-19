@@ -21,6 +21,12 @@ public class AlternateCareFacilityEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column( name = "id", nullable = false )
 	private Long id;
+	
+	@Column(name = "liferay_state_id")
+	private Long liferayStateId;
+	
+	@Column(name = "liferay_acf_id")
+	private Long liferayAcfId;
 
 	@Column(name="identifier")
 	private String identifier;
@@ -31,7 +37,7 @@ public class AlternateCareFacilityEntity {
 	@Column(name = "phone_number")
 	private String phoneNumber;
 	
- 	@OneToMany( fetch = FetchType.LAZY, mappedBy = "acfId"  )
+ 	@OneToMany( fetch = FetchType.EAGER, mappedBy = "acfId"  )
 	@Column( name = "alternate_care_facility_id", nullable = false  )
 	private List<AlternateCareFacilityAddressLineEntity> lines = new ArrayList<AlternateCareFacilityAddressLineEntity>();
  	
@@ -140,4 +146,21 @@ public class AlternateCareFacilityEntity {
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	public Long getLiferayStateId() {
+		return liferayStateId;
+	}
+
+	public void setLiferayStateId(Long liferayStateId) {
+		this.liferayStateId = liferayStateId;
+	}
+
+	public Long getLiferayAcfId() {
+		return liferayAcfId;
+	}
+
+	public void setLiferayAcfId(Long liferayAcfId) {
+		this.liferayAcfId = liferayAcfId;
+	}
+	
 }

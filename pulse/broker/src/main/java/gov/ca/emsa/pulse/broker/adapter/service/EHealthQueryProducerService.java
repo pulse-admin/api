@@ -2,7 +2,6 @@ package gov.ca.emsa.pulse.broker.adapter.service;
 
 
 import gov.ca.emsa.pulse.broker.dto.EndpointDTO;
-import gov.ca.emsa.pulse.broker.saml.SAMLInput;
 import ihe.iti.xds_b._2007.RetrieveDocumentSetRequestType;
 import ihe.iti.xds_b._2007.RetrieveDocumentSetResponseType;
 

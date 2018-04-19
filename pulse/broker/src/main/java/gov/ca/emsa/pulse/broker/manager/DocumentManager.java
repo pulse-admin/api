@@ -4,7 +4,6 @@ import gov.ca.emsa.pulse.auth.user.CommonUser;
 import gov.ca.emsa.pulse.broker.dto.DocumentDTO;
 import gov.ca.emsa.pulse.broker.dto.EndpointDTO;
 import gov.ca.emsa.pulse.broker.dto.PatientEndpointMapDTO;
-import gov.ca.emsa.pulse.broker.saml.SAMLInput;
 
 import java.sql.SQLException;
 import java.util.List;

@@ -53,13 +53,14 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-  compile('org.springframework:spring-beans:4.2.6.RELEASE')
+  compile('org.springframework:spring-beans:4.3.9.RELEASE')
   compile('io.springfox:springfox-swagger2:2.4.0')
   compile('io.springfox:springfox-spring-web:2.4.0')
   compile('io.springfox:springfox-core:2.4.0')
-  compile('org.springframework.security:spring-security-core:4.1.0.RELEASE')
+  compile('org.springframework.security:spring-security-core:4.2.3.RELEASE')
   compile('org.connectopensource:CONNECTCommonTypesLib:4.0.9')
   compile('com.github.springtestdbunit:spring-test-dbunit:1.3.0')
+  compile group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '2.2.11'
 }
 
 task wrapper(type: Wrapper) {

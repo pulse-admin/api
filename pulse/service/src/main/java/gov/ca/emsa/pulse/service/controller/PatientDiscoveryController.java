@@ -27,7 +27,7 @@ public class PatientDiscoveryController {
 	@Autowired EHealthQueryConsumerService consumerService;
 	@Autowired JSONToSOAPService jsonConverter;
 
-	@RequestMapping(value = "/patientDiscovery", method = RequestMethod.POST, produces = MediaType.APPLICATION_XML_VALUE)
+	@RequestMapping(value = "/patientDiscovery", method = RequestMethod.POST, produces = "application/soap+xml")
 	public String patientDiscovery(@RequestBody String request)
 		throws JAXBException, SOAPException, SAMLException {
 		PRPAIN201305UV02 soapRequest = consumerService.unMarshallPatientDiscoveryRequestObject(request);

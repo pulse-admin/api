@@ -24,14 +24,15 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-@SpringBootApplication(scanBasePackages= {"gov.ca.emsa.pulse.auth.**"})
+@SpringBootApplication(scanBasePackages = {
+        "gov.ca.emsa.pulse.auth.**"
+})
 @PropertySource("classpath:/environment.test.properties")
 public class TestConfig extends WebMvcConfigurerAdapter implements EnvironmentAware {
     private Environment env;
 
-	// Logger
-	private static final Logger LOG = LoggerFactory
-			.getLogger(TestConfig.class);
+    // Logger
+    private static final Logger LOG = LoggerFactory.getLogger(TestConfig.class);
 
     @Override
     public void setEnvironment(final Environment e) {

@@ -10,6 +10,8 @@ import gov.ca.emsa.pulse.broker.entity.AlternateCareFacilityEntity;
 public class AlternateCareFacilityDTO extends AddressableDTO {
 
 	private Long id;
+	private Long liferayStateId;
+	private Long liferayAcfId;
 	private String identifier;
 	private String name;
 	private String phoneNumber;
@@ -28,6 +30,8 @@ public class AlternateCareFacilityDTO extends AddressableDTO {
 		}
 		
 		this.id = entity.getId();
+		this.liferayStateId = entity.getLiferayStateId();
+		this.liferayAcfId = entity.getLiferayAcfId();
 		this.identifier = entity.getIdentifier();
 		this.name = entity.getName();
 		this.phoneNumber = entity.getPhoneNumber();
@@ -110,5 +114,21 @@ public class AlternateCareFacilityDTO extends AddressableDTO {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Long getLiferayStateId() {
+		return liferayStateId;
+	}
+
+	public void setLiferayStateId(Long liferayStateId) {
+		this.liferayStateId = liferayStateId;
+	}
+
+	public Long getLiferayAcfId() {
+		return liferayAcfId;
+	}
+
+	public void setLiferayAcfId(Long liferayAcfId) {
+		this.liferayAcfId = liferayAcfId;
 	}
 }

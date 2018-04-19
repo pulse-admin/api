@@ -15,6 +15,10 @@ public class EndpointStatus {
 	public void setName(String name) {
 		this.name = name;
 	}
+	@Override
+	public String toString() {
+		return "EndpointStatus [id=" + id + ", name=" + name + "]";
+	}
 	
 	
 }

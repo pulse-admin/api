@@ -30,7 +30,6 @@ import gov.ca.emsa.pulse.broker.dto.PatientEndpointMapDTO;
 import gov.ca.emsa.pulse.broker.manager.AlternateCareFacilityManager;
 import gov.ca.emsa.pulse.broker.manager.DocumentManager;
 import gov.ca.emsa.pulse.broker.manager.PatientManager;
-import gov.ca.emsa.pulse.broker.saml.SAMLInput;
 import gov.ca.emsa.pulse.broker.util.QueryableEndpointStatusUtil;
 import gov.ca.emsa.pulse.common.domain.QueryEndpointStatus;
 import gov.ca.emsa.pulse.common.domain.QueryStatus;
@@ -130,9 +129,12 @@ public class DocumentManagerImpl implements DocumentManager {
 		if(StringUtils.isEmpty(resultDoc.getContents())) {
 			EndpointDTO documentContentsEndpoint = null;
 			EndpointDTO documentDiscoveryEndpoint = endpointDao.findById(patientEndpointMap.getEndpointId());
-			if(documentDiscoveryEndpoint != null) {
+			if(documentDiscoveryEndpoint != null && documentDiscoveryEndpoint.getManagingOrganization() != null) {
 				String managingOrganizationName = documentDiscoveryEndpoint.getManagingOrganization();
 				documentContentsEndpoint = endpointDao.findByManagingOrganizationAndType(managingOrganizationName, endpointStatusesForQuery.getStatuses(), EndpointTypeEnum.DOCUMENT_RETRIEVE);
+			}else{
+				String organizationId = documentDiscoveryEndpoint.getOrganizationId();
+				documentContentsEndpoint = endpointDao.findByOrganizationIdAndType(organizationId, endpointStatusesForQuery.getStatuses(), EndpointTypeEnum.DOCUMENT_RETRIEVE);
 			}
 			
 			if(documentContentsEndpoint != null) {

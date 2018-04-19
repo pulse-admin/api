@@ -2,18 +2,18 @@ package gov.ca.emsa.pulse.auth.json;
 
 public class ErrorJSONObject {
 
-	String error;
+    String error;
 
-	public ErrorJSONObject(String errorMessage){
-		error = errorMessage;
-	}
+    public ErrorJSONObject(String errorMessage) {
+        error = errorMessage;
+    }
 
-	public String getError() {
-		return error;
-	}
+    public String getError() {
+        return error;
+    }
 
-	public void setError(String error) {
-		this.error = error;
-	}
+    public void setError(String error) {
+        this.error = error;
+    }
 
 }

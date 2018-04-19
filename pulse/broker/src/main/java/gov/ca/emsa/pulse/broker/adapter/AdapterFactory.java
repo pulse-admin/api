@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 public class AdapterFactory {
 	private static final Logger logger = LogManager.getLogger(AdapterFactory.class);
 	@Autowired private EHealthAdapter ehealthAdapter;
+	@Autowired private CareQualityAdapter careQualityAdapter;
 	
 	public Adapter getAdapter(EndpointDTO endpoint) {
 		if(StringUtils.isEmpty(endpoint.getAdapter())) {
@@ -20,9 +21,9 @@ public class AdapterFactory {
 		
 		if(endpoint.getAdapter().toUpperCase().contains("EHEALTH")) {
 			return getEhealthAdapter();
-		} 
-		//TODO: if we want to add future types like IHE, they will go here as else if{}
-		else {
+		} else if(endpoint.getAdapter().toUpperCase().contains("CAREQUALITY")){
+			return getCareQualityAdapter();
+		}else {
 			logger.error("Could not find a matching adapter for endpoint type : " + endpoint.getAdapter());
 		}
 		return null;
@@ -35,4 +36,13 @@ public class AdapterFactory {
 	public void setEhealthAdapter(EHealthAdapter ehealthAdapter) {
 		this.ehealthAdapter = ehealthAdapter;
 	}
+
+	public CareQualityAdapter getCareQualityAdapter() {
+		return careQualityAdapter;
+	}
+
+	public void setCareQualityAdapter(CareQualityAdapter careQualityAdapter) {
+		this.careQualityAdapter = careQualityAdapter;
+	}
+	
 }

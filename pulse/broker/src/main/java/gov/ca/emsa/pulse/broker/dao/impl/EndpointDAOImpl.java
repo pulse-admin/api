@@ -46,7 +46,7 @@ public class EndpointDAOImpl extends BaseDAOImpl implements EndpointDAO {
 	}
 
 	public EndpointDTO update(EndpointDTO dto){
-		EndpointEntity endpointEntity =  getByExternalId(dto.getExternalId());
+		EndpointEntity endpointEntity =  getByUrl(dto.getUrl());
 		if(endpointEntity == null) {
 			return create(dto);
 		} 
@@ -156,6 +156,15 @@ public class EndpointDAOImpl extends BaseDAOImpl implements EndpointDAO {
 	}
 	
 	@Override
+	public EndpointDTO findByUrl(String url) {
+		EndpointEntity result = getByUrl(url);
+		if(result == null) {
+			return null;
+		}
+		return new EndpointDTO(result);
+	}
+	
+	@Override
 	public EndpointDTO findByLocationIdAndType(Long locationId, List<EndpointStatusEnum> statuses, EndpointTypeEnum type) {
 		List<String> statusNames = new ArrayList<String>(statuses.size());
 		for(EndpointStatusEnum status : statuses) {
@@ -213,6 +222,35 @@ public class EndpointDAOImpl extends BaseDAOImpl implements EndpointDAO {
 		return null;
 	}
 	
+	@Override
+	public EndpointDTO findByOrganizationIdAndType(String organizationId, List<EndpointStatusEnum> statuses, EndpointTypeEnum type) {
+		List<String> statusNames = new ArrayList<String>(statuses.size());
+		for(EndpointStatusEnum status : statuses) {
+			statusNames.add(status.getName().toUpperCase());
+		}
+		
+		Query query = entityManager.createQuery("SELECT DISTINCT endpoint "
+				+ "FROM EndpointEntity endpoint "
+				+ "JOIN FETCH endpoint.endpointStatus endpointStatus "
+				+ "JOIN FETCH endpoint.endpointType "
+				+ "LEFT OUTER JOIN FETCH endpoint.mimeTypes "
+				+ "LEFT OUTER JOIN FETCH endpoint.locationEndpointMaps locMaps "
+				+ "LEFT OUTER JOIN FETCH locMaps.location loc "
+				+ "WHERE endpoint.organizationId = :orgId "
+				+ "AND UPPER(endpoint.endpointType.code) = :typeCode "
+				+ "AND UPPER(endpointStatus.name) IN (:endpointStatusNames)"
+				, EndpointEntity.class);
+		query.setParameter("typeCode", type.getCode().toUpperCase());
+		query.setParameter("orgId", organizationId);
+		query.setParameter("endpointStatusNames", statusNames);
+		
+		List<EndpointEntity> endpoints = query.getResultList();
+		if(endpoints != null && endpoints.size() > 0) {
+			return new EndpointDTO(endpoints.get(0));
+		}
+		return null;
+	}
+	
 	private EndpointStatusEntity getEndpointStatusByName(String name) {
 		EndpointStatusEntity result = null;
 		Query query = entityManager.createQuery("from EndpointStatusEntity where UPPER(name) = :name",
@@ -231,6 +269,19 @@ public class EndpointDAOImpl extends BaseDAOImpl implements EndpointDAO {
 		Query query = entityManager.createQuery("from EndpointTypeEntity where UPPER(code) = :code",
 				EndpointTypeEntity.class);
 		query.setParameter("code", code.toUpperCase());
+		List<EndpointTypeEntity> results = query.getResultList();
+		if(results == null || results.size() == 0) {
+			return null;
+		}
+		result = results.get(0);
+		return result;
+	}
+	
+	private EndpointTypeEntity getEndpointTypeByName(String name) {
+		EndpointTypeEntity result = null;
+		Query query = entityManager.createQuery("from EndpointTypeEntity where UPPER(name) LIKE :name",
+				EndpointTypeEntity.class);
+		query.setParameter("name", name.trim().replaceAll(" ", "").replaceAll("XCA:", "").toUpperCase());
 		List<EndpointTypeEntity> results = query.getResultList();
 		if(results == null || results.size() == 0) {
 			return null;
@@ -303,6 +354,24 @@ public class EndpointDAOImpl extends BaseDAOImpl implements EndpointDAO {
 		return null;
 	}
 	
+	private EndpointEntity getByUrl(String url) {
+		Query query = entityManager.createQuery("SELECT DISTINCT endpoint "
+				+ "FROM EndpointEntity endpoint "
+				+ "JOIN FETCH endpoint.endpointStatus "
+				+ "JOIN FETCH endpoint.endpointType "
+				+ "LEFT OUTER JOIN FETCH endpoint.mimeTypes "
+				+ "LEFT OUTER JOIN FETCH endpoint.locationEndpointMaps locMaps "
+				+ "LEFT OUTER JOIN FETCH locMaps.location "
+				+ "WHERE endpoint.url LIKE :url", EndpointEntity.class);
+		query.setParameter("url", url);
+		
+		List<EndpointEntity> result = query.getResultList();
+		if(result != null && result.size() > 0) {
+			return result.get(0);
+		}
+		return null;
+	}
+	
 	private List<EndpointEntity> getByEndpointTypes(List<String> typeNames) {
 		Query query = entityManager.createQuery("SELECT DISTINCT endpoint "
 				+ "FROM EndpointEntity endpoint "
@@ -349,6 +418,7 @@ public class EndpointDAOImpl extends BaseDAOImpl implements EndpointDAO {
 		EndpointEntity endpointEntity = (entity != null ? entity : new EndpointEntity());
 		endpointEntity.setAdapter(endpointDto.getAdapter());
 		endpointEntity.setManagingOrganization(endpointDto.getManagingOrganization());
+		endpointEntity.setOrganizationId(endpointDto.getOrganizationId());
 		if(endpointDto.getEndpointStatus() != null) {
 			if(endpointDto.getEndpointStatus().getId() != null) {
 				endpointEntity.setEndpointStatusId(endpointDto.getEndpointStatus().getId());
@@ -366,10 +436,14 @@ public class EndpointDAOImpl extends BaseDAOImpl implements EndpointDAO {
 			if(endpointDto.getEndpointType().getId() != null) {
 				endpointEntity.setEndpointTypeId(endpointDto.getEndpointType().getId());
 			} else if(!StringUtils.isEmpty(endpointDto.getEndpointType().getCode())) {
-				EndpointTypeEntity typeEntity = getEndpointTypeByCode(endpointDto.getEndpointType().getCode());
-				if(typeEntity != null) {
-					endpointEntity.setEndpointTypeId(typeEntity.getId());
-					endpointEntity.setEndpointType(typeEntity);
+				EndpointTypeEntity typeEntityCode = getEndpointTypeByCode(endpointDto.getEndpointType().getCode());
+				EndpointTypeEntity typeEntityName = getEndpointTypeByName(endpointDto.getEndpointType().getName());
+				if(typeEntityCode != null) {
+					endpointEntity.setEndpointTypeId(typeEntityCode.getId());
+					endpointEntity.setEndpointType(typeEntityCode);
+				} else if(typeEntityName != null){
+					endpointEntity.setEndpointTypeId(typeEntityName.getId());
+					endpointEntity.setEndpointType(typeEntityName);
 				} else {
 					logger.error("Could not find endpoint type with code " + endpointDto.getEndpointType().getCode());
 				}

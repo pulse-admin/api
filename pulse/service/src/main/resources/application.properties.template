@@ -6,8 +6,6 @@ debug=true
 brokerUrl=https://localhost:8090
 samlServiceUrl=https://localhost:8080
 
-pulseOID=PULSE_OID_HERE
-
 keyLocation=C:\\JSONPulseRsaJoseJWebKeyTest.txt
 jwtAllowedClockSkew=30
 jwtIssuer=CALEMSA

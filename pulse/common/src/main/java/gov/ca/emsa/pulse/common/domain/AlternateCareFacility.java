@@ -4,6 +4,8 @@ import java.util.Date;
 
 public class AlternateCareFacility {
 	private Long id;
+	private Long liferayStateId;
+	private Long liferayAcfId;
 	private String identifier;
 	private String name;
 	private String phoneNumber;
@@ -51,5 +53,21 @@ public class AlternateCareFacility {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Long getLiferayStateId() {
+		return liferayStateId;
+	}
+
+	public void setLiferayStateId(Long liferayStateId) {
+		this.liferayStateId = liferayStateId;
+	}
+
+	public Long getLiferayAcfId() {
+		return liferayAcfId;
+	}
+
+	public void setLiferayAcfId(Long liferayAcfId) {
+		this.liferayAcfId = liferayAcfId;
 	}
 }

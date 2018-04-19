@@ -23,6 +23,13 @@ $ nano application.properties
 $ # Set up database un/pw, server port, spring security password, etc.
 ```
 
+An API key is requried when connecting to Carequality Directory Services, and will need to be provided in the broker's application.properties file, in a format like:
+
+```sh
+sequoiaCarequalityOrganizationDirectoryUrl=https://INSERT URL HERE/Organization?apikey=INSERT_API_KEY_HERE&_format=json&_count=5
+sequoiaEHexOrganizationDirectoryUrl=https://INSERT URL HERE/Organization?apikey=INSERT_API_KEY_HERE&_format=json&_count=5
+```
+
 ## Build the jar file
 
 ### Command Line

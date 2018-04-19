@@ -16,145 +16,146 @@ import gov.ca.emsa.pulse.broker.dto.DocumentDTO;
 import gov.ca.emsa.pulse.broker.dto.EndpointDTO;
 import gov.ca.emsa.pulse.broker.dto.PatientEndpointMapDTO;
 import gov.ca.emsa.pulse.broker.manager.DocumentManager;
-import gov.ca.emsa.pulse.broker.saml.SAMLInput;
 import gov.ca.emsa.pulse.common.domain.QueryEndpointStatus;
 
 @Component
 public class DocumentRetrievalService implements Runnable {
 
-	private static final Logger logger = LogManager.getLogger(DocumentRetrievalService.class);
+    private static final Logger logger = LogManager.getLogger(DocumentRetrievalService.class);
 
-	private PatientEndpointMapDTO patientEndpointMap;
-	private EndpointDTO endpoint;
-	private DocumentDTO document;
-	//private List<DocumentDTO> documents;
-	@Autowired private DocumentManager docManager;
-	@Autowired private AdapterFactory adapterFactory;
-	private String assertion;
-	private CommonUser user;
-	
-	@Override
-	public void run() {
-		List<DocumentDTO> documents = new ArrayList<DocumentDTO>();
-		
-		boolean querySuccess = true;
-		if(endpoint == null) {
-			logger.error("There is no document retrieval endpoint to get document contents.");
-			querySuccess = false;
-		} else if(document == null) {
-			logger.error("No document was specified.");
-			querySuccess = false;
-		} else {
-			if(document.getStatus() != null && 
-				(document.getStatus() == QueryEndpointStatus.Cancelled ||
-				document.getStatus() == QueryEndpointStatus.Failed)) {
-				
-				document.setStatus(QueryEndpointStatus.Closed);
-				docManager.update(document);
-				
-				DocumentDTO newDocRequest = new DocumentDTO(document);
-				newDocRequest.setStatus(QueryEndpointStatus.Active);
-				document = docManager.create(newDocRequest);
-				logger.info("Is resultDoc null?: " + (document == null));
-				logger.info("Created document with ID " + document.getId());
-			} 
-			documents.add(document);
-			
-			Adapter adapter = adapterFactory.getAdapter(endpoint);
-			if(adapter != null) {
-				logger.info("Starting query to endpoint with external id '" + endpoint.getExternalId() + "' for document contents.");
-				try {
-					synchronized(docManager) {
-						for(DocumentDTO document : documents) {
-							document.setStatus(QueryEndpointStatus.Active);
-							docManager.update(document);
-						}
-					}
-					adapter.retrieveDocumentsContents(user, endpoint, documents, patientEndpointMap, assertion);
-				} catch(Exception ex) {
-					logger.error("Exception thrown in adapter " + adapter.getClass(), ex);
-					ex.printStackTrace();
-					querySuccess = false;
-				}
-			}
-			logger.info("Completed query to endpoint with external id '" + endpoint.getEndpointStatus() + "' for contents of " + documents.size() + " documents.");
-		}
-		
-		synchronized(docManager) {
-			if(querySuccess) {
-				//store the returned document contents
-				for(DocumentDTO doc : documents) {
-					doc.setStatus(QueryEndpointStatus.Successful);
-					docManager.update(doc);
-				}
-			} else {
-				for(DocumentDTO doc : documents) {
-					if(!StringUtils.isEmpty(doc.getContents())) {
-						doc.setStatus(QueryEndpointStatus.Successful);
-						docManager.update(doc);
-					} else {
-						doc.setStatus(QueryEndpointStatus.Failed);
-						docManager.update(doc);
-					}
-				}
-			}
-		}
-	}
+    private PatientEndpointMapDTO patientEndpointMap;
+    private EndpointDTO endpoint;
+    private DocumentDTO document;
+    // private List<DocumentDTO> documents;
+    @Autowired
+    private DocumentManager docManager;
+    @Autowired
+    private AdapterFactory adapterFactory;
+    private String assertion;
+    private CommonUser user;
 
-	public CommonUser getUser() {
-		return user;
-	}
+    @Override
+    public void run() {
+        List<DocumentDTO> documents = new ArrayList<DocumentDTO>();
 
-	public void setUser(CommonUser user) {
-		this.user = user;
-	}
-	
-	public String getAssertion() {
-		return assertion;
-	}
+        boolean querySuccess = true;
+        if (endpoint == null) {
+            logger.error("There is no document retrieval endpoint to get document contents.");
+            querySuccess = false;
+        } else if (document == null) {
+            logger.error("No document was specified.");
+            querySuccess = false;
+        } else {
+            if (document.getStatus() != null && (document.getStatus() == QueryEndpointStatus.Cancelled
+                    || document.getStatus() == QueryEndpointStatus.Failed)) {
 
-	public void setAssertion(String assertion) {
-		this.assertion = assertion;
-	}
+                document.setStatus(QueryEndpointStatus.Closed);
+                docManager.update(document);
 
-	public EndpointDTO getEndpoint() {
-		return endpoint;
-	}
+                DocumentDTO newDocRequest = new DocumentDTO(document);
+                newDocRequest.setStatus(QueryEndpointStatus.Active);
+                document = docManager.create(newDocRequest);
+                logger.info("Is resultDoc null?: " + (document == null));
+                logger.info("Created document with ID " + document.getId());
+            }
+            documents.add(document);
 
-	public void setEndpoint(EndpointDTO endpoint) {
-		this.endpoint = endpoint;
-	}
+            Adapter adapter = adapterFactory.getAdapter(endpoint);
+            if (adapter != null) {
+                logger.info("Starting query to endpoint with external id '" + endpoint.getExternalId()
+                        + "' for document contents.");
+                try {
+                    synchronized (docManager) {
+                        for (DocumentDTO document : documents) {
+                            document.setStatus(QueryEndpointStatus.Active);
+                            docManager.update(document);
+                        }
+                    }
+                    adapter.retrieveDocumentsContents(user, endpoint, documents, patientEndpointMap, assertion);
+                } catch (Exception ex) {
+                    logger.error("Exception thrown in adapter " + adapter.getClass(), ex);
+                    ex.printStackTrace();
+                    querySuccess = false;
+                }
+            }
+            logger.info("Completed query to endpoint with external id '" + endpoint.getEndpointStatus()
+                    + "' for contents of " + documents.size() + " documents.");
+        }
 
-	public AdapterFactory getAdapterFactory() {
-		return adapterFactory;
-	}
+        synchronized (docManager) {
+            if (querySuccess) {
+                // store the returned document contents
+                for (DocumentDTO doc : documents) {
+                    doc.setStatus(QueryEndpointStatus.Successful);
+                    docManager.update(doc);
+                }
+            } else {
+                for (DocumentDTO doc : documents) {
+                    if (!StringUtils.isEmpty(doc.getContents())) {
+                        doc.setStatus(QueryEndpointStatus.Successful);
+                        docManager.update(doc);
+                    } else {
+                        doc.setStatus(QueryEndpointStatus.Failed);
+                        docManager.update(doc);
+                    }
+                }
+            }
+        }
+    }
 
-	public void setAdapterFactory(AdapterFactory adapterFactory) {
-		this.adapterFactory = adapterFactory;
-	}
+    public CommonUser getUser() {
+        return user;
+    }
 
+    public void setUser(CommonUser user) {
+        this.user = user;
+    }
 
-//	public List<DocumentDTO> getDocuments() {
-//		return documents;
-//	}
-//
-//	public void setDocuments(List<DocumentDTO> documents) {
-//		this.documents = documents;
-//	}
+    public String getAssertion() {
+        return assertion;
+    }
 
-	public PatientEndpointMapDTO getPatientEndpointMap() {
-		return patientEndpointMap;
-	}
+    public void setAssertion(String assertion) {
+        this.assertion = assertion;
+    }
 
-	public void setPatientEndpointMap(PatientEndpointMapDTO patientEndpointMap) {
-		this.patientEndpointMap = patientEndpointMap;
-	}
+    public EndpointDTO getEndpoint() {
+        return endpoint;
+    }
 
-	public DocumentDTO getDocument() {
-		return document;
-	}
+    public void setEndpoint(EndpointDTO endpoint) {
+        this.endpoint = endpoint;
+    }
 
-	public void setDocument(DocumentDTO document) {
-		this.document = document;
-	}
+    public AdapterFactory getAdapterFactory() {
+        return adapterFactory;
+    }
+
+    public void setAdapterFactory(AdapterFactory adapterFactory) {
+        this.adapterFactory = adapterFactory;
+    }
+
+    // public List<DocumentDTO> getDocuments() {
+    // return documents;
+    // }
+    //
+    // public void setDocuments(List<DocumentDTO> documents) {
+    // this.documents = documents;
+    // }
+
+    public PatientEndpointMapDTO getPatientEndpointMap() {
+        return patientEndpointMap;
+    }
+
+    public void setPatientEndpointMap(PatientEndpointMapDTO patientEndpointMap) {
+        this.patientEndpointMap = patientEndpointMap;
+    }
+
+    public DocumentDTO getDocument() {
+        return document;
+    }
+
+    public void setDocument(DocumentDTO document) {
+        this.document = document;
+    }
 }

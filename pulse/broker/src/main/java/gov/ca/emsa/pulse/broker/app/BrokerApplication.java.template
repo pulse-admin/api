@@ -2,7 +2,9 @@ package gov.ca.emsa.pulse.broker.app;
 
 import gov.ca.emsa.pulse.broker.auth.AcfLastAccessFilter;
 import gov.ca.emsa.pulse.broker.cache.CacheCleanupJob;
+import gov.ca.emsa.pulse.broker.cache.CtenDirectoryRefreshManager;
 import gov.ca.emsa.pulse.broker.cache.DirectoryRefreshManager;
+import gov.ca.emsa.pulse.broker.cache.SequoiaDirectoryRefreshManager;
 import gov.ca.emsa.pulse.broker.manager.AlternateCareFacilityManager;
 import gov.ca.emsa.pulse.broker.manager.EndpointManager;
 import gov.ca.emsa.pulse.broker.manager.LocationManager;
@@ -12,9 +14,6 @@ import gov.ca.emsa.pulse.broker.manager.impl.DocumentQueryService;
 import gov.ca.emsa.pulse.broker.manager.impl.DocumentRetrievalService;
 import gov.ca.emsa.pulse.broker.manager.impl.PatientQueryService;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
-import java.util.List;
 import java.util.Timer;
 
 import org.apache.log4j.LogManager;
@@ -67,10 +66,18 @@ public class BrokerApplication {
 	private String patientCacheCleanupMinutes1;
 	@Value("${directoryRefreshSeconds}")
 	private String directoryRefreshSeconds;
-	@Value("${locationDirectoryUrl}")
-	private String locationDirectoryUrl;
-	@Value("${endpointDirectoryUrl}")
-	private String endpointDirectoryUrl;
+	@Value("${ctenLocationDirectoryUrl}")
+	private String ctenLocationDirectoryUrl;
+	@Value("${ctenEndpointDirectoryUrl}")
+	private String ctenEndpointDirectoryUrl;
+	@Value("${sequoiaCarequalityOrganizationDirectoryUrl}")
+	private String sequoiaCarequalityOrganizationDirectoryUrl;
+	@Value("${sequoiaEHexOrganizationDirectoryUrl}")
+	private String sequoiaEHexOrganizationDirectoryUrl;
+	@Value("${sequoiaDirectoryStatus}")
+	private String sequoiaDirectoryStatus;
+	@Value("${ctenDirectoryStatus}")
+	private String ctenDirectoryStatus;
 	
 	//TODO: the env is still null when the entity manager bean gets called and 
 	//i really have no idea why. This is a short-term fix. The longer answer is that
@@ -157,25 +164,48 @@ public class BrokerApplication {
 	}
 	
 	@Bean
+	public CtenDirectoryRefreshManager ctenDirectoryRefreshManager() {
+
+		CtenDirectoryRefreshManager qcTask = null;
+		qcTask = new CtenDirectoryRefreshManager();
+		qcTask.setLocationManager(locationManager);
+		qcTask.setEndpointManager(endpointManager);
+		qcTask.setLocationDirectoryUrl(ctenLocationDirectoryUrl);
+		qcTask.setEndpointDirectoryUrl(ctenEndpointDirectoryUrl);
+		qcTask.setStatus(ctenDirectoryStatus);
+
+		return qcTask;
+	}
+	
+	@Bean
+	public SequoiaDirectoryRefreshManager sequoiaDirectoryRefreshManager() {
+
+		SequoiaDirectoryRefreshManager qcTask = null;
+		qcTask = new SequoiaDirectoryRefreshManager();
+		qcTask.setLocationManager(locationManager);
+		qcTask.setEndpointManager(endpointManager);
+		qcTask.setSequoiaCareQualityOrganizationDirectoryUrl(sequoiaCarequalityOrganizationDirectoryUrl);
+		qcTask.setSequoiaEHexOrganizationDirectoryUrl(sequoiaEHexOrganizationDirectoryUrl);
+		qcTask.setStatus(sequoiaDirectoryStatus);
+
+		return qcTask;
+	}
+	
+	@Bean
 	public DirectoryRefreshManager directoryRefreshManager() {
 		int directoryRefresh = new Integer(directoryRefreshSeconds);
 		long directoryRefreshExpirationMillis = directoryRefresh * 1000;
 		
 		DirectoryRefreshManager qcTask = null;
-
+		
 		if(directoryRefresh > 0) {
 			qcTask = new DirectoryRefreshManager();
-			qcTask.setLocationManager(locationManager);
-			qcTask.setEndpointManager(endpointManager);
-			qcTask.setExpirationMillis(directoryRefreshExpirationMillis);
-			qcTask.setLocationDirectoryUrl(locationDirectoryUrl);
-			qcTask.setEndpointDirectoryUrl(endpointDirectoryUrl);
-			
+			qcTask.setDirectoryRefreshExpirationMillis(directoryRefreshExpirationMillis);
+			qcTask.setCtenDirectoryManager(ctenDirectoryRefreshManager());
+			qcTask.setSequoiaDirectoryManager(sequoiaDirectoryRefreshManager());
 			Timer timer = new Timer();
 			timer.scheduleAtFixedRate(qcTask, 0, directoryRefreshExpirationMillis);
-
 		}
-		
 		return qcTask;
 	}
 	
@@ -206,4 +236,5 @@ public class BrokerApplication {
 	public DocumentRetrievalService documentRetrievalService() {
 		return new DocumentRetrievalService();
 	}
+
 }

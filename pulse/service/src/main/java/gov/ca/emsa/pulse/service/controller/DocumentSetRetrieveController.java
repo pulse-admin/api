@@ -26,7 +26,7 @@ public class DocumentSetRetrieveController {
 
 	//https://www.ihe.net/uploadedFiles/Documents/ITI/IHE_ITI_TF_Vol3.pdf
 	//section 4.2.4.1
-	@RequestMapping(value = "/retrieveDocumentSet", method = RequestMethod.POST, produces = MediaType.APPLICATION_XML_VALUE)
+	@RequestMapping(value = "/retrieveDocumentSet", method = RequestMethod.POST, produces = "application/soap+xml")
 	public String documentRequest(@RequestBody String request) 
 		throws JAXBException, SOAPException {
 		SOAPMessage soapRequest = consumerService.getSoapMessageFromXml(request);

@@ -23,6 +23,11 @@ public class EndpointType {
 	public void setCode(String code) {
 		this.code = code;
 	}
+	@Override
+	public String toString() {
+		return "EndpointType [id=" + id + ", name=" + name + ", code=" + code
+				+ "]";
+	}
 	
 	
 }

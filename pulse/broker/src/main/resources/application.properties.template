@@ -1,5 +1,5 @@
 #for embedded gradle tomcat
-server.port=9090
+server.port=8090
 
 #spring boot properties
 spring.datasource.url= jdbc:postgresql://localhost:5432/pulse
@@ -12,25 +12,30 @@ persistenceUnitName=pulse
 #can users create and edit ACFs?
 acfWritesAllowed=false
 
-
 # for CTEN we have to get all URLS like this when they dont
 # fit on one page
 https://cten.ca-hie.net:8443/fhir/Location?_count=500
 
 #the url where the list of queryable locations is located
-locationDirectoryUrl=https://localhost:9080/mock/Location
-#locationDirectoryUrl=https://cten-staging.ca-hie.net:8443/fhir/Location
+ctenLocationDirectoryUrl=https://localhost:9080/mock/Location
+#ctenLocationDirectoryUrl=https://cten-staging.ca-hie.net:8443/fhir/Location
 
 #the url where the list of queryable endpoints is located
-endpointDirectoryUrl=https://localhost:9080/mock/Endpoint
-#endpointDirectoryUrl=https://cten-staging.ca-hie.net:8443/fhir/Endpoint
+ctenEndpointDirectoryUrl=https://localhost:9080/mock/Endpoint
+#ctenEndpointDirectoryUrl=https://cten-staging.ca-hie.net:8443/fhir/Endpoint
+
+sequoiaCarequalityOrganizationDirectoryUrl
+sequoiaEHexOrganizationDirectoryUrl
+
+ctenDirectoryStatus=Inactive
+sequoiaDirectoryStatus=Active
 
 #what statuses of endpoints should we use? Comma-separated list here,
 #any value from http://build.fhir.org/valueset-endpoint-status.html
 #defaults to Active if nothing is specified
 endpointStatusesToQuery=Active,Test
 
-#default timeout to connect to external organizations 
+#default timeout to connect to external organizations
 #"ping time" (should typically be a smaller number than request timeout)
 defaultConnectTimeoutSeconds=10
 
@@ -66,12 +71,24 @@ timeToLiveTimestamp=timetoliveinseconds
 management.security.enabled=false
 endpoints.health.sensitive=false
 
-mtomMutltipartRequest
+keystorePath=<keystore_path>
+keystorePassword=<keystore_password>
+keystoreUsername=<alias_name>
 
-soapKeystorePass=<insertSoapCertPassToSign>
-soapKeystoreAlias=<insertSoapCertKeystoreToSign>
+saml.issuer=CN = *.pulse-us.org
+saml.issuer.format=urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName
+saml.id.entityId=urn:test:ainq:baltimore:pulse-us:dev
+
+mtomMutltipartRequest
 
 server.ssl.key-store: src/main/resources/keystore.p12
 server.ssl.key-store-password: <insert password>
 server.ssl.keyStoreType: PKCS12
 server.ssl.keyAlias: tomcat
+
+keystorePath=<keystore_path>
+keystorePassword=<keystore_password>
+keystoreUsername=<alias_name>
+saml.issuer=CN = *.pulse-us.org
+saml.issuer.format=urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName
+saml.id.entityId=urn:test:ainq:baltimore:pulse-us:dev
